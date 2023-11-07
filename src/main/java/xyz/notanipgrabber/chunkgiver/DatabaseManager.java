@@ -1,5 +1,6 @@
 package xyz.notanipgrabber.chunkgiver;
 
+import java.io.File;
 import java.sql.*;
 
 public class DatabaseManager {
@@ -7,10 +8,13 @@ public class DatabaseManager {
 
     public void connect() {
         try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:data.db");
+            File dataFolder = new File("plugins/chunkGiver");
+            if (!dataFolder.exists()) {
+                dataFolder.mkdirs();
+            }
+            connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder.getAbsolutePath() + "/data.db");
             createTable();
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -73,4 +77,28 @@ public class DatabaseManager {
         }
         return false; // Default value if player not found
     }
+
+    public void setPlayerSoundSetting(String uuid, boolean sound) {
+        String query = "UPDATE players SET sound = ? WHERE uuid = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setBoolean(1, sound);
+            statement.setString(2, uuid);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setPlayerMessageSetting(String uuid, boolean message) {
+        String query = "UPDATE players SET message = ? WHERE uuid = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setBoolean(1, message);
+            statement.setString(2, uuid);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
