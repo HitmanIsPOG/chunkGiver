@@ -1,0 +1,4 @@
+name: chunkGiver
+version: '${project.version}'
+main: xyz.notanipgrabber.chunkgiver.ChunkGiver
+api-version: '1.20'
